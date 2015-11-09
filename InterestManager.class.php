@@ -13,7 +13,7 @@ class InterestManager {
 	
 	function addInterest($name){
 		
-		//objekt kus tagastame errori (id, message) või successi (message)
+		//objekt kus tagastame errori (id, message) vÃµi successi (message)
 		$response= new StdClass();
 		
 		//kontrollid et sellist huviala veel ei ole
@@ -27,9 +27,9 @@ class InterestManager {
 			//huviala on juba olemas
 			$error=new StdClass();
 			$error->id = 0;
-			$error->message = "Selline huviala juba olemas!";
+			$error->message = "Huviala '".$name."' on juba olemas!";
 			$response->error=$error;
-			//pärast return käsku ei vaadata funki edasi
+			//pÃ¤rast return kÃ¤sku ei vaadata funki edasi
 			return $response;
 		}
 		
@@ -41,24 +41,48 @@ class InterestManager {
         $stmt->bind_param("s", $name);
 		
         if ($stmt->execute()){
-			//sisestamine õnnestus
+			//sisestamine Ãµnnestus
 			$success=new StdClass();
 			$success->message= "Huviala edukalt lisatud";
 			$response->success=$success;
 			
 		}
 		else{
-			//ei õnnestunud
+			//ei Ãµnnestunud
 			$error=new StdClass();
 			$error->id = 1;
-			$error->message = "Midagi läks katki.";
+			$error->message = "Midagi lÃ¤ks katki.";
 			$response->error=$error;			
 		}
         $stmt->close();
 		
 		return $response;
+	}
+	
+	
+	function createDropdown(){
 		
+		$html='<select name="dropdown_interest">';
 		
+		//liidan eelmisele juurde
+		$html .='<select>';
+			
+			$stmt= $this->connection->prepare("SELECT id, name FROM interests");
+			$stmt->bind_result($id, $name);
+			$stmt->execute();
+			
+			
+			//iga rea kohta
+			while($stmt->fetch()){
+				$html .='<option>'.$name.'</option>';
+			}
+			
+			$stmt->close();
+			
+			//$html .='<option>Test 2</option>';
+		$html .='</select>';
+		
+		return $html;
 	}
 	
 }?>

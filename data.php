@@ -24,12 +24,12 @@
 	*****HALDUS*****
 	***************/
 	
-	$InterestManager = new InterestManager(
+	$InterestManager = new InterestManager($mysqli,
 	$_SESSION["user_id"]);
 	
-	if(isset($_GET["new_interest"])){
+	if(isset($_POST["new_interest"])){
 		
-		$InterestManager->addInterest($_GET["new_interest"]);
+		$add_interest_response=$InterestManager->addInterest($_POST["new_interest"]);
 	}
 	
 ?> 
@@ -44,3 +44,21 @@ Tere, <?=$_SESSION['user_email'];?> <a href="?logout=1">Logi välja</a>
   	<input name="new_interest"<br>
   	<input type="submit" name="interest" value="Lisa huviala">
   </form>
+
+    <?php if(isset($add_interest_response->success)): ?>
+	
+	<p style="color:green;">
+	<?=$add_interest_response->success->message;?>
+	</p>
+  
+  <?php elseif(isset($add_interest_response->error)): ?>
+  
+	<p style="color:red;">
+	<?=$add_interest_response->error->message;?>
+	</p>
+  
+  <?php endif; ?>
+  
+<h2> Minu huvialad </h2>
+
+<?=$InterestManager->createDropdown();?>
